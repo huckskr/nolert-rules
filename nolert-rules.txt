@@ -1,0 +1,13 @@
+nolert-rules	1
+# Nolert remote rule pack. One rule per line, fields separated by TABS. Format: core/.../remote/RulePack.kt
+# CI tests this file against every corpus, signs it and publishes it; phones pick it up within a day.
+version	2026101001
+min-engine	1
+
+# Letters spaced out with hyphens or underscores ("F-İ-Y-A-T D-Ü-Ş-T-Ü"); dotted ones are handled by the engine.
+rewrite	strip	-_	(?<![\p{L}\p{N}])\p{L}(?:[-_]\p{L}){2,}(?![\p{L}\p{N}])
+
+test	BLOCK	tr-TR	com.einnovation.temu	order_status	F-İ-Y-A-T D-Ü-Ş-T-Ü	Eklediğiniz ürün daha ucuzladı. Görmek için tıklayın>
+test	BLOCK	en-US	com.einnovation.temu	-	P_R_I_C_E D_R_O_P	The item you added got cheaper. Tap to see
+test	ALLOW	tr-TR	com.einnovation.temu	order_status	Siparişin kargoya verildi	PO-211-48213 numaralı siparişin yola çıktı
+test	ALLOW	tr-TR	com.example.shop	-	E-posta adresin değişti	Hesabının e-posta adresi güncellendi. Sen değilsen şifreni değiştir.
