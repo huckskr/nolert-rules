@@ -1,7 +1,7 @@
 nolert-rules	1
 # Nolert remote rule pack. One rule per line, fields separated by TABS. Format: core/.../remote/RulePack.kt
 # CI tests this file against every corpus, signs it and publishes it; phones pick it up within a day.
-version	2026101001
+version	2026101301
 min-engine	1
 
 # Letters spaced out with hyphens or underscores ("F-İ-Y-A-T D-Ü-Ş-T-Ü"); dotted ones are handled by the engine.
@@ -11,3 +11,36 @@ test	BLOCK	tr-TR	com.einnovation.temu	order_status	F-İ-Y-A-T D-Ü-Ş-T-Ü	Ekled
 test	BLOCK	en-US	com.einnovation.temu	-	P_R_I_C_E D_R_O_P	The item you added got cheaper. Tap to see
 test	ALLOW	tr-TR	com.einnovation.temu	order_status	Siparişin kargoya verildi	PO-211-48213 numaralı siparişin yola çıktı
 test	ALLOW	tr-TR	com.example.shop	-	E-posta adresin değişti	Hesabının e-posta adresi güncellendi. Sen değilsen şifreni değiştir.
+
+# Blind round 5 (13 October 2026). Built into the app from 0.5.0; here for phones on older versions.
+# A Drive / click-and-collect order ready to pick up; a delivery booked for a time window.
+strong	FR	ORDER	commande drive est prête*
+strong	FR	ORDER	commande est prête*
+strong	FR	ORDER	courses sont prêtes
+strong	FR	ORDER	prête* à être retirée*
+strong	FR	ORDER	prêt* à être retiré*
+strong	PL	DELIVERY	w wybranym oknie czasowym
+strong	PL	DELIVERY	w wybranym oknie dostawy
+strong	PL	DELIVERY	w oknie czasowym
+strong	PL	DELIVERY	w oknie dostawy
+# Offers that borrow delivery words.
+decisive	DE	DISCOUNT	jetzt günstiger
+decisive	DE	DISCOUNT	noch günstiger
+promo	ES	FREE_GIFT	3	tu envío gratis
+promo	ES	FREE_GIFT	3	tu envío gratuito
+promo	ES	FREE_GIFT	3	su envío gratis
+promo	ES	FREE_GIFT	3	su envío gratuito
+promo	PL	FREE_GIFT	3	darmową dostawą do paczkomat*
+promo	PL	FREE_GIFT	3	darmowa dostawa do paczkomat*
+promo	PL	FREE_GIFT	3	darmową dostawę do paczkomat*
+promo	JA	COUPON	4	プロモーションコードをお届けしました
+promo	JA	COUPON	4	クーポンコードをお届けしました
+promo	JA	COUPON	4	割引コードをお届けしました
+promo	JA	COUPON	4	クーポンをお届けしました
+
+test	ALLOW	fr-FR	com.example.shop	-	Votre commande Drive est prête ! 🚗	Vos courses sont prêtes à être retirées à la borne Drive de votre magasin Carrefour.
+test	ALLOW	pl-PL	com.example.shop	-	Dostawa Twoich zakupów	Kierowca Frisco dotrze do Ciebie w wybranym oknie czasowym 18:00 - 19:00.
+test	BLOCK	de-DE	com.yopeso.lieferando	-	Hungrig? Burger Me hat 20% Rabatt heute Abend! 🍔	Hol dir deine Lieblingsgerichte jetzt günstiger direkt nach Hause geliefert.
+test	BLOCK	es-ES	com.grability.rappi	-	¡Tu envío gratis expira en 2 horas! 🚀	No dejes pasar tu beneficio. Pide de tus restaurantes favoritos ahora con costo de envío $0.
+test	BLOCK	ja-JP	com.ubercab.eats	-	ご注文の準備はできていますか？ 🍱	配達手数料が無料になる特別なプロモーションコードをお届けしました。お得にお食事をお楽しみください。
+test	BLOCK	pl-PL	pl.inpost.inmobile	-	Oh my dog! 🐾	Przesyłki dla Twojego pupila z darmową dostawą do Paczkomatu z kodem PUPIL! Sprawdź ofertę.
