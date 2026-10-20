@@ -1,0 +1,44 @@
+name: Keep report server awake
+
+# Supabase pauses a free project after a week with little activity. Three tiny calls a day keep the
+# Nolert report server awake, so reports from phones always reach the team. The call runs
+# public.ping(), which returns a constant and reads or writes nothing. The key below is the
+# project's publishable key: public by design (it ships inside the app); it can only call ping() and
+# the rate-limited report function.
+#
+# This repository is public, so these runs use no Actions minutes. GitHub switches off scheduled
+# workflows in a repository with no activity for 60 days; every run re-enables this workflow, which
+# keeps the schedule on without dummy commits.
+
+on:
+  schedule:
+    - cron: "17 */8 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ping the database
+        env:
+          URL: https://cvlxoemmhlyvxjszvpzb.supabase.co/rest/v1/rpc/ping
+          KEY: sb_publishable_Vwt8UFLBrGav1J9fQbQSHQ_SYNkGB7M
+        run: |
+          for attempt in 1 2 3; do
+            if [ "$(curl -sS --max-time 20 -X POST -H "apikey: $KEY" -H 'Content-Type: application/json' -d '{}' "$URL")" = "true" ]; then
+              echo "awake"; exit 0
+            fi
+            sleep $((attempt * 20))
+          done
+          echo "::error::The report server did not answer. If it is paused, resume it in the Supabase dashboard."
+          exit 1
+
+      - name: Keep this schedule switched on
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/keepalive.yml/enable"
